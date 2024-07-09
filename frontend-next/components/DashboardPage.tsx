@@ -38,7 +38,6 @@ export default function DashboardPage() {
       return acc;
     }, 0);
   };
-  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -82,10 +81,14 @@ export default function DashboardPage() {
   }, []);
 
 
-  data.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+  const displayLimit = 3;
 
-  const displayLimit: number = 3;
-  const displayData = data.slice(0, displayLimit);
+  // Sort data by datetime in descending order
+  const sortedData = [...data].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+
+  // Display the top 3 most recent transactions
+  const displayData = sortedData.slice(0, displayLimit);
+  
 
   return (
     <AuroraBackground>
@@ -99,7 +102,7 @@ export default function DashboardPage() {
         }}
         className="relative flex flex-col gap-4 items-center justify-center px-4"
       >
-        <main className="flex min-h-screen flex-row items-center justify-center gap-20">
+        <main className="flex min-h-screen flex-col md:flex-row items-center justify-center gap-20">
           <div className="max-w-md w-full mx-auto rounded-none mt-20 md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black bg-opacity-50 dark:bg-opacity-50">
             <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
               Fill Your Debit and Credit
@@ -177,10 +180,10 @@ export default function DashboardPage() {
               <p>Available balance: {balance}</p>
             </div>
 
-            <div className="flex flex-col items-center ">
-            {displayData.map(({ title, datetime, description, debit, credit }, index) => (
+            <div className="flex flex-col items-center">
+            {displayData.slice().reverse().map(({ title, datetime, description, debit, credit }, index) => (
   <DashboardPrice
-    key={`${datetime}-${index}`} // Ensuring unique key with index fallback
+    key={`${datetime}-${index}`} 
     title={title}
     datetime={datetime}
     description={description}
@@ -188,7 +191,6 @@ export default function DashboardPage() {
     debit={debit}
   />
 ))}
-
               {data.length > displayLimit && (
                 <Link href={`/table`}>
                   <button 
