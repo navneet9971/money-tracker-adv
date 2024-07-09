@@ -19,39 +19,6 @@ type Transaction = {
   debit?: string;
 };
 
-// const initialData: Transaction[] = [
-//   {
-//     title: "Person 1",
-//     datetime: "2015-01-01T00:00:00",
-//     description: "Person 1 description",
-//     credit: "100"
-//   },
-//   {
-//     title: "Person 2",
-//     datetime: "2016-02-02T00:00:00",
-//     description: "Person 2 description",
-//     debit: "200"
-//   },
-//   {
-//     title: "Person 3",
-//     datetime: "2017-03-03T00:00:00",
-//     description: "Person 3 description",
-//     credit: "130000"
-//   },
-//   {
-//     title: "Person 2",
-//     datetime: "2020-02-02T00:00:00",
-//     description: "Person 2 description",
-//     debit: "200"
-//   },
-//   {
-//     title: "Person 9",
-//     datetime: "2025-02-02T00:00:00",
-//     description: "Person 2 description",
-//     debit: "300"
-//   },
-// ];
-
 export default function DashboardPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -61,9 +28,8 @@ export default function DashboardPage() {
     credit: "",
     debit: "",
   });
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Transaction[]>([]);
   const [balance, setBalance] = useState(0);
-
 
   const calculateBalance = (transactions: Transaction[]): number => {
     return transactions.reduce((acc, { debit, credit }) => {
@@ -72,15 +38,25 @@ export default function DashboardPage() {
       return acc;
     }, 0);
   };
+  
 
-  const handleSubmit =  (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  const response =  axiosInstance.post("/api/transaction", formData)
-  console.log(response)
-   
-    setFormData({ title: "", datetime: "", description: "", credit: "", debit: "" });
-    console.log("Form submitted with data:", formData);
+    try {
+      const response = await axiosInstance.post("/api/transaction", formData);
+      const newTransaction = response.data.transaction;
+  
+      // Update state with new transaction and recalculate balance
+      setData([newTransaction, ...data]);
+      setBalance(calculateBalance([newTransaction, ...data]));
+  
+      setFormData({ title: "", datetime: "", description: "", credit: "", debit: "" });
+      console.log("Form submitted with data:", formData);
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -90,31 +66,25 @@ export default function DashboardPage() {
     }));
   };
 
-
   useEffect(() => {
     const fetchTransactions = async () => {
-        try {
-            const response = await axiosInstance.get('/api/transaction');
-            setData(response.data);
-            console.log(response.data);
-        } catch (error) {
-            // setError('Failed to fetch transactions');
-            console.error(error);
-        }
+      try {
+        const response = await axiosInstance.get('/api/transaction');
+        setData(response.data.transactions);
+        setBalance(calculateBalance(response.data.transactions));
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     fetchTransactions();
-}, []);
+  }, []);
 
+  data.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
-  // const handleSeeMore = () => {
-  //   router.push("/table");
-  // }
-
-  // data.sort((a, b) => new Date(data.datetime).getTime() - new Date(a.datetime).getTime());
-
-  // const displayLimit: number = 3;
-  // const displayData = data.slice(0, displayLimit);
+  const displayLimit: number = 3;
+  const displayData = data.slice(0, displayLimit);
 
   return (
     <AuroraBackground>
@@ -147,7 +117,7 @@ export default function DashboardPage() {
                   />
                 </LabelInputContainer>
                 <LabelInputContainer>
-                  <Label htmlFor="date">Date</Label>
+                  <Label htmlFor="datetime">Date</Label>
                   <Input
                     id="datetime"
                     placeholder="Select a date"
@@ -207,17 +177,25 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex flex-col items-center ">
-              {data.map(({ title, datetime, description, debit, credit }) => (
-                <DashboardPrice title={title} datetime={datetime} description={description} credit={credit} debit={debit} />
-              ))}
-              {/* {data.length > displayLimit && (
+            {displayData.map(({ title, datetime, description, debit, credit }, index) => (
+  <DashboardPrice
+    key={`${datetime}-${index}`} // Ensuring unique key with index fallback
+    title={title}
+    datetime={datetime}
+    description={description}
+    credit={credit}
+    debit={debit}
+  />
+))}
+
+              {data.length > displayLimit && (
                 <Link href="/table">
                   <button className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                   >
                     Click here to see more
                   </button>
                 </Link>
-              )} */}
+              )}
             </div>
           </div>
         </main>
