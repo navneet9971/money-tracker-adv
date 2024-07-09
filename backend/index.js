@@ -8,7 +8,8 @@ const signup = require('./middleware/auth/signup');
 const profile = require('./middleware/auth/profile');
 
 const transactionPost = require('./middleware/transaction/transactionPost');
-
+const transactionGet = require('./middleware/transaction/transactionGet');
+ 
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -35,6 +36,7 @@ app.use('/api', profile)
 
 //Route for transaction
 app.use('/api', transactionPost)
+app.use('/api', transactionGet)
 
 // Start the server
 app.listen(port, () => {

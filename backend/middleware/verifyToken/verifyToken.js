@@ -1,29 +1,23 @@
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const secretKey = process.env.SECRET_KEY;
 
-function verifyToken(req, res, next) {
+const verifyToken = (req, res, next) => {
     const bearerHeader = req.headers['authorization'];
-    
     if (typeof bearerHeader !== 'undefined') {
         const bearer = bearerHeader.split(' ');
-        
-        if (bearer[0] !== 'Bearer') {
-            return res.status(403).json({ error: 'Invalid token scheme' });
-        }
-        
-        const token = bearer[1];
-        
-        jwt.verify(token, secretKey, (err, authData) => {
+        const bearerToken = bearer[1];
+        req.token = bearerToken;
+
+        jwt.verify(bearerToken, secretKey, (err, authData) => {
             if (err) {
-                return res.status(403).json({ error: 'Invalid token' });
+                return res.status(403).json({ error: 'Access denied' });
             }
             req.authData = authData;
             next();
         });
     } else {
-        res.status(403).json({ error: 'No token provided' });
+        res.status(403).json({ error: 'Access denied' });
     }
-}
+};
 
 module.exports = verifyToken;

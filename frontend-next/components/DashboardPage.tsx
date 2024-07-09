@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { Textarea } from "./ui/textarea";
 import Link from "next/link";
 import DashboardPrice from "./DashboardPrice"
+import axiosInstance from "@/interceptors/axios";
 
 type Transaction = {
   title: string;
@@ -18,55 +19,51 @@ type Transaction = {
   debit?: string;
 };
 
-const initialData: Transaction[] = [
-  {
-    title: "Person 1",
-    datetime: "2015-01-01T00:00:00",
-    description: "Person 1 description",
-    credit: "100"
-  },
-  {
-    title: "Person 2",
-    datetime: "2016-02-02T00:00:00",
-    description: "Person 2 description",
-    debit: "200"
-  },
-  {
-    title: "Person 3",
-    datetime: "2017-03-03T00:00:00",
-    description: "Person 3 description",
-    credit: "130000"
-  },
-  {
-    title: "Person 2",
-    datetime: "2020-02-02T00:00:00",
-    description: "Person 2 description",
-    debit: "200"
-  },
-  {
-    title: "Person 9",
-    datetime: "2025-02-02T00:00:00",
-    description: "Person 2 description",
-    debit: "300"
-  },
-];
+// const initialData: Transaction[] = [
+//   {
+//     title: "Person 1",
+//     datetime: "2015-01-01T00:00:00",
+//     description: "Person 1 description",
+//     credit: "100"
+//   },
+//   {
+//     title: "Person 2",
+//     datetime: "2016-02-02T00:00:00",
+//     description: "Person 2 description",
+//     debit: "200"
+//   },
+//   {
+//     title: "Person 3",
+//     datetime: "2017-03-03T00:00:00",
+//     description: "Person 3 description",
+//     credit: "130000"
+//   },
+//   {
+//     title: "Person 2",
+//     datetime: "2020-02-02T00:00:00",
+//     description: "Person 2 description",
+//     debit: "200"
+//   },
+//   {
+//     title: "Person 9",
+//     datetime: "2025-02-02T00:00:00",
+//     description: "Person 2 description",
+//     debit: "300"
+//   },
+// ];
 
 export default function DashboardPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
-    date: "",
+    datetime: "",
     description: "",
     credit: "",
     debit: "",
   });
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [balance, setBalance] = useState(0);
 
-  useEffect(() => {
-    const initialBalance = calculateBalance(initialData);
-    setBalance(initialBalance);
-  }, []);
 
   const calculateBalance = (transactions: Transaction[]): number => {
     return transactions.reduce((acc, { debit, credit }) => {
@@ -76,19 +73,12 @@ export default function DashboardPage() {
     }, 0);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit =  (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newTransaction: Transaction = {
-      ...formData,
-      datetime: new Date().toISOString(),
-    };
-    setData((prev) => {
-      const updatedData = [newTransaction, ...prev];
-      const newBalance = calculateBalance(updatedData);
-      setBalance(newBalance);
-      return updatedData;
-    });
-    setFormData({ title: "", date: "", description: "", credit: "", debit: "" });
+  const response =  axiosInstance.post("/api/transaction", formData)
+  console.log(response)
+   
+    setFormData({ title: "", datetime: "", description: "", credit: "", debit: "" });
     console.log("Form submitted with data:", formData);
   };
 
@@ -100,18 +90,31 @@ export default function DashboardPage() {
     }));
   };
 
-  // const handleLoginClick = () => {
-  //   router.push("/");
-  // };
 
-  const handleSeeMore = () => {
-    router.push("/table");
-  }
+  useEffect(() => {
+    const fetchTransactions = async () => {
+        try {
+            const response = await axiosInstance.get('/api/transaction');
+            setData(response.data);
+            console.log(response.data);
+        } catch (error) {
+            // setError('Failed to fetch transactions');
+            console.error(error);
+        }
+    };
 
-  data.sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
+    fetchTransactions();
+}, []);
 
-  const displayLimit: number = 3;
-  const displayData = data.slice(0, displayLimit);
+
+  // const handleSeeMore = () => {
+  //   router.push("/table");
+  // }
+
+  // data.sort((a, b) => new Date(data.datetime).getTime() - new Date(a.datetime).getTime());
+
+  // const displayLimit: number = 3;
+  // const displayData = data.slice(0, displayLimit);
 
   return (
     <AuroraBackground>
@@ -146,10 +149,10 @@ export default function DashboardPage() {
                 <LabelInputContainer>
                   <Label htmlFor="date">Date</Label>
                   <Input
-                    id="date"
+                    id="datetime"
                     placeholder="Select a date"
                     type="date"
-                    value={formData.date}
+                    value={formData.datetime}
                     onChange={handleInputChange}
                   />
                 </LabelInputContainer>
@@ -204,17 +207,17 @@ export default function DashboardPage() {
             </div>
 
             <div className="flex flex-col items-center ">
-              {displayData.map(({ title, datetime, description, debit, credit }) => (
+              {data.map(({ title, datetime, description, debit, credit }) => (
                 <DashboardPrice title={title} datetime={datetime} description={description} credit={credit} debit={debit} />
               ))}
-              {data.length > displayLimit && (
+              {/* {data.length > displayLimit && (
                 <Link href="/table">
                   <button className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                   >
                     Click here to see more
                   </button>
                 </Link>
-              )}
+              )} */}
             </div>
           </div>
         </main>

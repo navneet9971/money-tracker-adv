@@ -34,7 +34,7 @@ export default function LoginPage() {
 
     try{
       const response = await axiosInstance.post("/api/login", formData)
-      console.log("Form submitted", response.data);
+      localStorage.setItem("access", response.data.token)
       router.push('/dashboard')
     } catch (err) {
       console.error("login failed")
