@@ -7,6 +7,8 @@ const login = require('./middleware/auth/login');
 const signup = require('./middleware/auth/signup');
 const profile = require('./middleware/auth/profile');
 
+const transactionPost = require('./middleware/transaction/transactionPost');
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -26,9 +28,13 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+// Route for authentication
 app.use('/api', login);
 app.use('/api', signup);
 app.use('/api', profile)
+
+//Route for transaction
+app.use('/api', transactionPost)
 
 // Start the server
 app.listen(port, () => {

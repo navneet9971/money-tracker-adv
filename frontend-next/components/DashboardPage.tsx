@@ -8,6 +8,7 @@ import { AuroraBackground } from "@/components/ui/auroraBackground";
 import { motion } from "framer-motion";
 import { Textarea } from "./ui/textarea";
 import Link from "next/link";
+import DashboardPrice from "./DashboardPrice"
 
 type Transaction = {
   title: string;
@@ -204,25 +205,7 @@ export default function DashboardPage() {
 
             <div className="flex flex-col items-center ">
               {displayData.map(({ title, datetime, description, debit, credit }) => (
-                <div key={title} className="flex gap-10 items-center p-4 border-b dark:border-neutral-200">
-                  <div className="flex-grow">
-                    <h3 className="text-neutral-800 dark:text-neutral-200">{title}</h3>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">{datetime}</p>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-400">{description}</p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    {credit && (
-                      <p className="text-sm text-right text-green-600 dark:text-green-400">
-                        +{credit}
-                      </p>
-                    )}
-                    {debit && (
-                      <p className="text-sm text-right text-red-600 dark:text-red-400">
-                        -{debit}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                <DashboardPrice title={title} datetime={datetime} description={description} credit={credit} debit={debit} />
               ))}
               {data.length > displayLimit && (
                 <Link href="/table">
