@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
-import { useRouter } from "next/navigation";
 import { AuroraBackground } from "@/components/ui/auroraBackground";
 import { motion } from "framer-motion";
 import { Textarea } from "./ui/textarea";
@@ -20,7 +19,7 @@ type Transaction = {
 };
 
 export default function DashboardPage() {
-  const router = useRouter();
+
   const [formData, setFormData] = useState({
     title: "",
     datetime: "",
@@ -30,6 +29,7 @@ export default function DashboardPage() {
   });
   const [data, setData] = useState<Transaction[]>([]);
   const [balance, setBalance] = useState(0);
+
 
   const calculateBalance = (transactions: Transaction[]): number => {
     return transactions.reduce((acc, { debit, credit }) => {
@@ -80,6 +80,7 @@ export default function DashboardPage() {
 
     fetchTransactions();
   }, []);
+
 
   data.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
@@ -189,8 +190,9 @@ export default function DashboardPage() {
 ))}
 
               {data.length > displayLimit && (
-                <Link href="/table">
-                  <button className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+                <Link href={`/table`}>
+                  <button 
+                  className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                   >
                     Click here to see more
                   </button>

@@ -21,8 +21,6 @@ export default function SignupPage() {
 
   });
 
-  console.log(formData)
-
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -47,8 +45,7 @@ export default function SignupPage() {
     e.preventDefault();
     
     try {
-      const response = await axiosInstance.post("/api/signup", formData);
-      console.log("Form submitted:", response.data);
+       await axiosInstance.post("/api/signup", formData);
       
       router.push("/");
     } catch (error) {
