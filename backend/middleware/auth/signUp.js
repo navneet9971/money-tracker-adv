@@ -3,7 +3,7 @@ const Auth = require("../../models/Auths");
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 
-router.post('/signin', async (req, res) => {
+router.post('/signup', async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
 
@@ -16,9 +16,8 @@ router.post('/signin', async (req, res) => {
             return res.status(400).json({ error: 'User already exists' });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10); // Hashing the password
-        const user = await Auth.create({ firstName, lastName, email, password: hashedPassword });
-        console.log('User created:', user);
+        // const hashedPassword = await bcrypt.hash(password, 10); // Hashing the password
+        const user = await Auth.create({ firstName, lastName, email, password });
         res.status(201).json(user);
     } catch (error) {
         console.error('Error creating user:', error.message);

@@ -1,20 +1,27 @@
-"use client";
+"use client"
+
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
-// import {
-//   IconBrandGithub,
-//   IconBrandGoogle,
-//   IconBrandOnlyfans,
-// } from "@tabler/icons-react";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import { AuroraBackground } from "@/components/ui/auroraBackground";
 import { motion } from "framer-motion";
+import axiosInstance from "@/interceptors/axios";
 
 export default function SignupPage() {
   const router = useRouter();
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName:"",
+    email: "",
+    password: "",
+
+  });
+
+  console.log(formData)
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -27,16 +34,32 @@ export default function SignupPage() {
       reader.readAsDataURL(file);
     }
   };
-  
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [id]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted");
+    
+    try {
+      const response = await axiosInstance.post("/api/signup", formData);
+      console.log("Form submitted:", response.data);
+      
+      router.push("/");
+    } catch (error) {
+      console.error("Signup failed:", error);
+      
+    }
   };
 
   const handleLoginClick = () => {
-    router.push("/")
-  }
+    router.push("/");
+  };
 
   return (
     <AuroraBackground>
@@ -51,7 +74,6 @@ export default function SignupPage() {
         className="relative flex flex-col gap-4 items-center justify-center px-4"
       >
         <main className="flex min-h-screen flex-col items-center justify-center">
-
           <div className="max-w-md w-full  mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
             <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
               Welcome to Money Tracker
@@ -64,35 +86,27 @@ export default function SignupPage() {
             <form className="my-8" onSubmit={handleSubmit}>
               <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
                 <LabelInputContainer>
-                  <Label htmlFor="firstname">First name</Label>
-                  <Input id="firstname" placeholder="Navneet" type="text" required/>
+                  <Label htmlFor="firstName">First name</Label>
+                  <Input id="firstName" placeholder="Navneet" type="text" onChange={handleInputChange} value={formData.firstName} required />
                 </LabelInputContainer>
                 <LabelInputContainer>
-                  <Label htmlFor="lastname">Last name</Label>
-                  <Input id="lastname" placeholder="Jha" type="text" required/>
+                  <Label htmlFor="lastName">Last name</Label>
+                  <Input id="lastName" placeholder="Jha" type="text" onChange={handleInputChange} value={formData.lastName} required />
                 </LabelInputContainer>
               </div>
               <LabelInputContainer className="mb-4">
-  <Label htmlFor="profilePicture">Profile Picture</Label>
-  <Input id="profilePicture" type="file" accept="image/*" onChange={handleProfilePictureChange} />
-</LabelInputContainer>
+                <Label htmlFor="profilePicture">Profile Picture</Label>
+                <Input id="profilePicture" type="file" accept="image/*" onChange={handleProfilePictureChange} />
+              </LabelInputContainer>
 
               <LabelInputContainer className="mb-4">
                 <Label htmlFor="email">Email Address</Label>
-                <Input id="email" placeholder="Navneetjha2012@gmail.com" type="email" required/>
+                <Input id="email" placeholder="Navneetjha2012@gmail.com" type="email" onChange={handleInputChange} value={formData.email} required />
               </LabelInputContainer>
               <LabelInputContainer className="mb-4">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" placeholder="••••••••" type="password"  required/>
+                <Input id="password" placeholder="••••••••" type="password" onChange={handleInputChange} value={formData.password} required />
               </LabelInputContainer>
-              {/* <LabelInputContainer className="mb-8">
-          <Label htmlFor="twitterpassword">Your twitter password</Label>
-          <Input
-            id="twitterpassword"
-            placeholder="••••••••"
-            type="twitterpassword"
-          />
-        </LabelInputContainer> */}
 
               <button
                 className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
@@ -105,7 +119,7 @@ export default function SignupPage() {
               <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-4 h-[1px] w-full" />
 
               <h2 className="font-bold text-xl text-center m-3 text-neutral-800 dark:text-neutral-200">
-                Alredy have account?
+                Already have an account?
               </h2>
 
               <button
@@ -116,39 +130,6 @@ export default function SignupPage() {
                 Login &rarr;
                 <BottomGradient />
               </button>
-
-              {/* <div className="flex flex-col space-y-4">
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit"
-          >
-            <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-              GitHub
-            </span>
-            <BottomGradient />
-          </button>
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit"
-          >
-            <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-              Google
-            </span>
-            <BottomGradient />
-          </button>
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit"
-          >
-            <IconBrandOnlyfans className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-              OnlyFans
-            </span>
-            <BottomGradient />
-          </button>
-        </div> */}
             </form>
           </div>
         </main>
@@ -173,11 +154,5 @@ const LabelInputContainer = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  return (
-    <div className={cn("flex flex-col space-y-2 w-full", className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn("flex flex-col space-y-2 w-full", className)}>{children}</div>;
 };
-
-

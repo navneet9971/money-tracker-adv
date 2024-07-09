@@ -4,7 +4,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 const login = require('./middleware/auth/login');
-const signUp = require('./middleware/auth/signUp');
+const signup = require('./middleware/auth/signup');
 const profile = require('./middleware/auth/profile');
 
 const app = express();
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', login);
-app.use('/api', signUp);
+app.use('/api', signup);
 app.use('/api', profile)
 
 // Start the server

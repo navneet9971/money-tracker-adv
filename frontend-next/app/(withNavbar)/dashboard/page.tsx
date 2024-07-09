@@ -6,8 +6,6 @@ import DashboardPage from '@/components/DashboardPage'
 const Dashboard
  = () => {
   return (
-  
-
     <DashboardPage />
   )
 }

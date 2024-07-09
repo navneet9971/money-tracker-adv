@@ -9,8 +9,12 @@ const TransactionsTable = () => {
   const showScroll = transactions.length > 10; 
 
   return (
-    <AuroraBackground>
-      <div className={`w-4/5 ${showScroll ? 'overflow-y-auto h-80' : ''}`}>
+    <main className="flex min-h-screen flex-col items-center justify-center">
+      <AuroraBackground className="bg-white fixed top-0 left-0 w-full h-full z-0">
+        <div></div>
+      </AuroraBackground>
+
+      <div className={`w-4/5 ${showScroll ? 'overflow-y-auto h-80' : ''} z-10`}>
         <table className="table-auto w-full text-left border-collapse border border-gray-200">
           <thead>
             <tr className="bg-gray-100">
@@ -34,7 +38,7 @@ const TransactionsTable = () => {
           </tbody>
         </table>
       </div>
-    </AuroraBackground>
+    </main>
   );
 };
 
