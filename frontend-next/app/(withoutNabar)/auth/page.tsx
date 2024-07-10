@@ -107,7 +107,7 @@ export default function LoginPage() {
                 <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute inset-y-0 right-14 -top-36 "
+          className="absolute inset-y-2 right-14 -top-36 "
         >
           {showPassword ? '🙈' : '👁️'}
         </button>

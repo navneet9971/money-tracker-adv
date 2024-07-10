@@ -111,7 +111,7 @@ export default function SignupPage() {
                 <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute inset-y-0 right-14 top-40 "
+          className="absolute -inset-y-1 right-14 top-40 "
         >
           {showPassword ? '🙈' : '👁️'}
         </button>
