@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/cn";
@@ -73,11 +73,14 @@ export default function DashboardPage() {
       console.error(error);
     }
   };
-
-  useEffect(() => {
+  const fetchTransactionsMemoized = useCallback(() => {
     fetchTransactions();
   }, []);
-
+  
+  useEffect(() => {
+    fetchTransactionsMemoized();
+  }, [fetchTransactionsMemoized]);
+  
   const displayLimit = 3;
   const reversedData = [...data].reverse();
   const displayData = reversedData.slice(0, displayLimit);
