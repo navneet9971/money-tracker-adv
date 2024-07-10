@@ -20,11 +20,17 @@ import axios from "axios";
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -96,7 +102,15 @@ export default function LoginPage() {
               </LabelInputContainer>
               <LabelInputContainer className="mb-4">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" placeholder="••••••••" type="password" onChange={handleInputChange} value={formData.password} required />
+                <Input id="password" placeholder="••••••••" type={showPassword ? "text" : "password"} onChange={handleInputChange} value={formData.password} required 
+                />
+                <button
+          type="button"
+          onClick={togglePasswordVisibility}
+          className="absolute inset-y-0 right-14 -top-36 "
+        >
+          {showPassword ? '🙈' : '👁️'}
+        </button>
               </LabelInputContainer>
 
               <button

@@ -13,14 +13,18 @@ import { toast } from "react-toastify";
 export default function SignupPage() {
   const router = useRouter();
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
-
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName:"",
     email: "",
     password: "",
-
   });
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
 
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,7 +107,14 @@ export default function SignupPage() {
               </LabelInputContainer>
               <LabelInputContainer className="mb-4">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" placeholder="••••••••" type="password" onChange={handleInputChange} value={formData.password} required />
+                <Input id="password" placeholder="••••••••" type={showPassword ? "text" : "password"} onChange={handleInputChange} value={formData.password} required />
+                <button
+          type="button"
+          onClick={togglePasswordVisibility}
+          className="absolute inset-y-0 right-14 top-40 "
+        >
+          {showPassword ? '🙈' : '👁️'}
+        </button>
               </LabelInputContainer>
 
               <button
