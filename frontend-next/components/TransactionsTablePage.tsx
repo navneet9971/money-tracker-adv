@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { AuroraBackground } from "./ui/auroraBackground";
 import { format } from 'date-fns';
 import axiosInstance from "@/interceptors/axios";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 
 type Transaction = {
@@ -43,6 +45,47 @@ const TransactionsTable = () => {
 
     fetchTransactions();
   }, []);
+  
+
+  const handleDownload = () => {
+    const doc = new jsPDF();
+  
+    doc.setFontSize(10);
+    doc.text("Money Tracker", 14, 10);
+    doc.text("Transaction History", 14, 27);
+    doc.text(`Total Balance: ${balance}`, 160, 27);
+  
+    // Table
+    doc.autoTable({
+      head: [['Title', 'Date', 'Description', 'Credit', 'Debit']],
+      body: data.map(transaction => [
+        transaction.title,
+        format(new Date(transaction.datetime), 'yyyy-MM-dd HH:mm'),
+        transaction.description,
+        transaction.credit || '',
+        transaction.debit || ''
+      ]),
+      startY: 30,
+      theme: 'grid',
+      styles: {
+        cellPadding: 2,
+        fontSize: 10,
+        valign: 'middle',
+        halign: 'center'
+      },
+      columnStyles: {
+        0: { fontStyle: 'bold' },
+        1: { cellWidth: 'wrap' },
+        2: { cellWidth: 'wrap' },
+        3: { cellWidth: 'wrap' },
+        4: { cellWidth: 'wrap' }
+      }
+    });
+  
+    // Save the PDF
+    doc.save('transaction-history.pdf');
+  }
+  
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
@@ -50,8 +93,17 @@ const TransactionsTable = () => {
         <div></div>
       </AuroraBackground>
 
-      <p className="text-xl text-white font-bold m-6 z-10 mt-10">Available balance: {balance}</p>
-     
+      <p className="text-xl text-white font-bold m-6 z-10 mt-10">Available balance: {balance} </p>
+      <div className="flex items-end justify-end w-3/4 mb-2">
+        <button 
+          className="text-black z-10 flex items-end justify-end bg-gradient-to-br relative group/btn from-white dark:from-zinc-900 dark:to-zinc-900 to-neutral-600  dark:bg-zinc-800 text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]" 
+          onClick={handleDownload}
+          type="button"
+        >
+          Download History
+        </button>  
+      </div>  
+      
       <div className={`w-4/5 ${showScroll ? 'overflow-y-auto h-96' : ''} z-10`}>
         <table className="table-auto w-full text-left border-collapse border border-gray-200">
           <thead className="sticky top-0">

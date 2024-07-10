@@ -3,7 +3,7 @@
 import React from 'react'
 
 const DashboardPrice = ({ title, datetime, description, credit, debit }) => {
-  return (
+  return ( 
 <div key={title} className="flex items-center justify-between gap-20  p-4 border-b dark:border-neutral-200">
   <div className="flex-grow">
     <h3 className="text-neutral-100 dark:text-neutral-200">{title}</h3>
