@@ -43,32 +43,45 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+  
     try {
+      // Simulate async login process with axiosInstance
       const response = await axiosInstance.post("/api/login", formData);
       Cookies.set("access", response.data.token, { expires: 1 });
   
+      // Fetch profile after successful login
       const profile = await axiosInstance.get("/api/profile");
       localStorage.setItem("firstName", profile.data.user.firstName);
       localStorage.setItem("lastName", profile.data.user.lastName);
   
-      toast.success('Login Success', { position: 'top-right' });
+      // Use toast.promise for showing pending, success, and error messages
+      await toast.promise(
+        // Provide the Promise directly for the pending message
+        new Promise((resolve) => setTimeout(resolve, 1000)), // Example delay, replace with actual login process
+        {
+          pending: 'Logging in...',
+          success: 'Login Success',
+          error: 'Login failed, try again'
+        }
+      );
+  
       router.push('/dashboard');
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 401) {
-          // Unauthorized - Login and password do not match
-          toast.warning('Check your Email or Password', { position: 'top-right' });
+          await toast.warning('Check your Email or Password');
         } else {
-          // Other errors
-          toast.error('Login failed, try again', { position: 'top-right' });
+          await toast.error('Login failed, try again');
         }
       } else {
         console.error("Login failed:", err);
-        toast.error('Login failed, try again', { position: 'top-right' });
+        await toast.error('Login failed, try again');
       }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+  
 
 
   const handleSignupClick = () => {
@@ -117,8 +130,9 @@ export default function LoginPage() {
                 className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                 type="submit"
               >
-                {isLoading ? 'Logging in...' : 'Login →'}
-                {isLoading && <BottomGradient />}
+                Login →
+                {/* {isLoading ? 'Logging in...' : 'Login →'}
+                {isLoading && <BottomGradient />} */}
                 <BottomGradient />
               </button>
 

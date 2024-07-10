@@ -28,14 +28,26 @@ export default function Navbar({ className }: { className?: string }) {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    clearAllCookies();
-    console.log('All cookies have been cleared.');
-    toast.success('Log Out successfully!', { position: 'top-right' });
-    router.push("/");
-
-  };
+  const handleLogout = async () => {    
+    try {
+      localStorage.clear();
+      clearAllCookies();  
+     
+      await toast.promise(
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+        {
+          pending: 'Logging out...',
+          success: 'Logged out successfully!',
+          error: 'Logout failed, please try again'
+        }
+      );
+  
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error('Logout failed, please try again');
+    }
+}
 
   return (
     <div className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}>

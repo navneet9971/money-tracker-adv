@@ -82,6 +82,30 @@ export default function DashboardPage() {
   const reversedData = [...data].reverse();
   const displayData = reversedData.slice(0, displayLimit);
 
+  
+  const handleClickTransaction = () => {
+    const promise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const isSuccess = true; 
+        if (isSuccess) {
+          resolve("Data loaded successfully");
+        } else {
+          reject(new Error("Failed to load data"));
+        }
+      }, 2000);
+    });
+
+    toast.promise(
+      promise,
+      {
+        pending: "Loading...",
+        success: "Loaded successfully 👌",
+        error: "Error loading data 🤯",
+      }
+    );
+  };
+
+
   return (
     <AuroraBackground className="bg-black">
       <motion.div
@@ -183,8 +207,9 @@ export default function DashboardPage() {
               />
             ))}
             {data.length > displayLimit && (
-              <Link href={`/table`}>
+              <Link href={`/table`} passHref>
                 <button 
+                 onClick={handleClickTransaction}
                   className="bg-gradient-to-br relative group/btn from-white dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-black text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                 >
                   Click here to see more
