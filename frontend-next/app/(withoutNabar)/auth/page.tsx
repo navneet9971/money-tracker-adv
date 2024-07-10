@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import axiosInstance from "@/interceptors/axios";
+import Cookies from "js-cookie";
+
 
 
 export default function LoginPage() {
@@ -35,22 +37,22 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post("/api/login", formData);
-      localStorage.setItem("access", response.data.token);
-     
-  
-      
+      Cookies.set("access", response.data.token, { expires: 1 });
+
+
+
       const profile = await axiosInstance.get("/api/profile");
       localStorage.setItem("firstName", profile.data.user.firstName)
       localStorage.setItem("lastName", profile.data.user.lastName)
 
       router.push('/dashboard');
-      
+
     } catch (err) {
       console.error("Login failed:", err);
     }
     setIsLoading(false);
   };
-  
+
 
   const handleSignupClick = () => {
     setIsLoading(true);
@@ -60,7 +62,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AuroraBackground>
+    <AuroraBackground className="bg-black">
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -90,8 +92,8 @@ export default function LoginPage() {
                 className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                 type="submit"
               >
-               {isLoading ? 'Logging in...' : 'Login →'}
-               {isLoading && <BottomGradient />}
+                {isLoading ? 'Logging in...' : 'Login →'}
+                {isLoading && <BottomGradient />}
                 <BottomGradient />
               </button>
 

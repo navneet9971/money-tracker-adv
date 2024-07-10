@@ -46,13 +46,13 @@ const TransactionsTable = () => {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
-      <AuroraBackground className="bg-white fixed top-0 left-0 w-full h-full z-0">
+      <AuroraBackground className="bg-black fixed top-0 left-0 w-full h-full z-0">
         <div></div>
       </AuroraBackground>
 
-      <p className="text-xl font-bold m-6 z-10">Available balance: {balance}</p>
+      <p className="text-xl text-white font-bold m-6 z-10 mt-10">Available balance: {balance}</p>
      
-      <div className={`w-4/5 ${showScroll ? 'overflow-y-auto h-80' : ''} z-10`}>
+      <div className={`w-4/5 ${showScroll ? 'overflow-y-auto h-96' : ''} z-10`}>
         <table className="table-auto w-full text-left border-collapse border border-gray-200">
           <thead className="sticky top-0">
             <tr className="bg-gray-100">

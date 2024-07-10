@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const baseURL = 'http://localhost:4000/'
 
@@ -39,7 +40,7 @@ const redirectToLogin = () => {
 // Add an interceptor for setting the Authorization header with the access token
 axiosInstance.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem("access");
+      const token = Cookies.get("access");
       if (token) {
         config.headers["Authorization"] = `Bearer ${token}`;
       }

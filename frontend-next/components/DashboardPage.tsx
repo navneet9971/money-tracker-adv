@@ -91,7 +91,7 @@ export default function DashboardPage() {
   
 
   return (
-    <AuroraBackground>
+    <AuroraBackground className="bg-black">
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -177,10 +177,10 @@ export default function DashboardPage() {
           <div className="flrx items-center justify-center">
             <div className="flex flex-row items-center justify-between">
               <h1></h1>
-              <p>Available balance: {balance}</p>
+              <p className="text-left font-bold underline hover:underline-offset-4 md:underline-offset-4">Available balance: {balance}</p>
             </div>
 
-            <div className="flex flex-col items-center">
+            {/* <div className="flex flex-col items-center"> */}
             {displayData.slice().reverse().map(({ title, datetime, description, debit, credit }, index) => (
   <DashboardPrice
     key={`${datetime}-${index}`} 
@@ -194,13 +194,13 @@ export default function DashboardPage() {
               {data.length > displayLimit && (
                 <Link href={`/table`}>
                   <button 
-                  className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+                  className="bg-gradient-to-br relative group/btn from-white dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-black text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                   >
                     Click here to see more
                   </button>
                 </Link>
               )}
-            </div>
+            {/* </div> */}
           </div>
         </main>
       </motion.div>
