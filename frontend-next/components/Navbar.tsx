@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react"; // Import useEffect for side-effects
+import React, { useState, useEffect } from "react"; 
 import logout from "@/public/pp.svg";
 
 import { cn } from "@/utils/cn";
@@ -10,22 +10,20 @@ import Cookies from "js-cookie";
 
 export default function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
-  const [fullName, setFullName] = useState<string>(""); // State to hold full name
+  const [fullName, setFullName] = useState<string>(""); 
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch and set full name when component mounts
     const firstName = localStorage.getItem('firstName') || "";
     const lastName = localStorage.getItem('lastName') || "";
     setFullName(`${firstName} ${lastName}`);
-  }, []); // Empty dependency array ensures this runs only once
-
+  }, []); 
 
   // Function to clear all cookies
   const clearAllCookies = () => {
-    const allCookies = Cookies.get(); // Get all cookies
+    const allCookies = Cookies.get(); 
     for (const cookieName in allCookies) {
-      Cookies.remove(cookieName); // Remove each cookie
+      Cookies.remove(cookieName); 
     }
   };
 

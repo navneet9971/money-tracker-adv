@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../(withoutNabar)/globals.css";
 import Navbar from "@/components/Navbar";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Money Tracker",
-  description: "Track Your Money Where is going",
+  description: "Track Your Money Where it is going",
 };
 
 export default function RootLayout({
@@ -16,11 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" >
+    <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
-        <Navbar/>
+        <Navbar />
         {children}
-        </body>
+        <ToastContainer />
+      </body>
     </html>
   );
 }

@@ -9,17 +9,17 @@ import { Textarea } from "./ui/textarea";
 import Link from "next/link";
 import DashboardPrice from "./DashboardPrice"
 import axiosInstance from "@/interceptors/axios";
+import { toast } from "react-toastify";
 
 type Transaction = {
   title: string;
   datetime: string;
   description: string;
-  credit?: string;
-  debit?: string;
+  credit?: number;
+  debit?: number;
 };
 
 export default function DashboardPage() {
-
   const [formData, setFormData] = useState({
     title: "",
     datetime: "",
@@ -30,11 +30,11 @@ export default function DashboardPage() {
   const [data, setData] = useState<Transaction[]>([]);
   const [balance, setBalance] = useState(0);
 
-
   const calculateBalance = (transactions: Transaction[]): number => {
-    return transactions.reduce((acc, { debit, credit }) => {
-      if (credit) acc += parseFloat(credit) || 0;
-      if (debit) acc -= parseFloat(debit) || 0;
+    return transactions.reduce((acc, transaction) => {
+      const { debit = 0, credit = 0 } = transaction || {};
+      acc += credit;
+      acc -= debit;
       return acc;
     }, 0);
   };
@@ -44,18 +44,18 @@ export default function DashboardPage() {
     try {
       const response = await axiosInstance.post("/api/transaction", formData);
       const newTransaction = response.data.transaction;
-  
+
       // Update state with new transaction and recalculate balance
       setData([newTransaction, ...data]);
       setBalance(calculateBalance([newTransaction, ...data]));
-  
+
       setFormData({ title: "", datetime: "", description: "", credit: "", debit: "" });
-      console.log("Form submitted with data:", formData);
+      toast.success('Transaction added successfully!', { position: 'top-right' });
     } catch (error) {
+      toast.error('Failed to add transaction. Please try again later.', { position: 'top-right' });
       console.error(error);
     }
   };
-  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -80,15 +80,9 @@ export default function DashboardPage() {
     fetchTransactions();
   }, []);
 
-
   const displayLimit = 3;
-
-  // Sort data by datetime in descending order
-  const sortedData = [...data].sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime());
-
-  // Display the top 3 most recent transactions
-  const displayData = sortedData.slice(0, displayLimit);
-  
+  const reversedData = [...data].reverse();
+  const displayData = reversedData.slice(0, displayLimit);
 
   return (
     <AuroraBackground className="bg-black">
@@ -180,27 +174,25 @@ export default function DashboardPage() {
               <p className="text-left font-bold underline hover:underline-offset-4 md:underline-offset-4">Available balance: {balance}</p>
             </div>
 
-            {/* <div className="flex flex-col items-center"> */}
-            {displayData.slice().reverse().map(({ title, datetime, description, debit, credit }, index) => (
-  <DashboardPrice
-    key={`${datetime}-${index}`} 
-    title={title}
-    datetime={datetime}
-    description={description}
-    credit={credit}
-    debit={debit}
-  />
-))}
-              {data.length > displayLimit && (
-                <Link href={`/table`}>
-                  <button 
+            {displayData.map(({ title, datetime, description, debit, credit }, index) => (
+              <DashboardPrice
+                key={`${datetime}-${index}`}
+                title={title}
+                datetime={datetime}
+                description={description}
+                credit={credit}
+                debit={debit}
+              />
+            ))}
+            {data.length > displayLimit && (
+              <Link href={`/table`}>
+                <button 
                   className="bg-gradient-to-br relative group/btn from-white dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-black text-sm p-1 mt-6 text-center rounded-md h-7 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-                  >
-                    Click here to see more
-                  </button>
-                </Link>
-              )}
-            {/* </div> */}
+                >
+                  Click here to see more
+                </button>
+              </Link>
+            )}
           </div>
         </main>
       </motion.div>
