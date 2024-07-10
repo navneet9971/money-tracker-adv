@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import axiosInstance from "@/interceptors/axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 
 
@@ -38,17 +40,26 @@ export default function LoginPage() {
     try {
       const response = await axiosInstance.post("/api/login", formData);
       Cookies.set("access", response.data.token, { expires: 1 });
-
-
-
+  
       const profile = await axiosInstance.get("/api/profile");
-      localStorage.setItem("firstName", profile.data.user.firstName)
-      localStorage.setItem("lastName", profile.data.user.lastName)
-
+      localStorage.setItem("firstName", profile.data.user.firstName);
+      localStorage.setItem("lastName", profile.data.user.lastName);
+  
+      toast.success('Login Success', { position: 'top-right' });
       router.push('/dashboard');
-
     } catch (err) {
-      console.error("Login failed:", err);
+      if (axios.isAxiosError(err) && err.response) {
+        if (err.response.status === 401) {
+          // Unauthorized - Login and password do not match
+          toast.warning('Check your Email or Password', { position: 'top-right' });
+        } else {
+          // Other errors
+          toast.error('Login failed, try again', { position: 'top-right' });
+        }
+      } else {
+        console.error("Login failed:", err);
+        toast.error('Login failed, try again', { position: 'top-right' });
+      }
     }
     setIsLoading(false);
   };

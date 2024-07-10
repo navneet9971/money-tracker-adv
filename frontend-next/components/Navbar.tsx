@@ -7,6 +7,7 @@ import { cn } from "@/utils/cn";
 import { HoveredLink, Menu, MenuItem, ProductItem } from "./ui/navMenu";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 export default function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
@@ -31,7 +32,9 @@ export default function Navbar({ className }: { className?: string }) {
     localStorage.clear();
     clearAllCookies();
     console.log('All cookies have been cleared.');
+    toast.success('Log Out successfully!', { position: 'top-right' });
     router.push("/");
+
   };
 
   return (

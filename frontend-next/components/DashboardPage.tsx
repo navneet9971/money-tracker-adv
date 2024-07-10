@@ -7,7 +7,7 @@ import { AuroraBackground } from "@/components/ui/auroraBackground";
 import { motion } from "framer-motion";
 import { Textarea } from "./ui/textarea";
 import Link from "next/link";
-import DashboardPrice from "./DashboardPrice"
+import DashboardPrice from "./DashboardPrice";
 import axiosInstance from "@/interceptors/axios";
 import { toast } from "react-toastify";
 
@@ -42,12 +42,10 @@ export default function DashboardPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axiosInstance.post("/api/transaction", formData);
-      const newTransaction = response.data.transaction;
+      await axiosInstance.post("/api/transaction", formData);
 
-      // Update state with new transaction and recalculate balance
-      setData([newTransaction, ...data]);
-      setBalance(calculateBalance([newTransaction, ...data]));
+      // Re-fetch the transaction data to ensure we have the latest data
+      fetchTransactions();
 
       setFormData({ title: "", datetime: "", description: "", credit: "", debit: "" });
       toast.success('Transaction added successfully!', { position: 'top-right' });
@@ -65,18 +63,18 @@ export default function DashboardPage() {
     }));
   };
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await axiosInstance.get('/api/transaction');
-        setData(response.data.transactions);
-        setBalance(calculateBalance(response.data.transactions));
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  const fetchTransactions = async () => {
+    try {
+      const response = await axiosInstance.get('/api/transaction');
+      setData(response.data.transactions);
+      setBalance(calculateBalance(response.data.transactions));
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
+  useEffect(() => {
     fetchTransactions();
   }, []);
 

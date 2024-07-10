@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { AuroraBackground } from "@/components/ui/auroraBackground";
 import { motion } from "framer-motion";
 import axiosInstance from "@/interceptors/axios";
+import { toast } from "react-toastify";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -46,11 +47,11 @@ export default function SignupPage() {
     
     try {
        await axiosInstance.post("/api/signup", formData);
-      
+       toast.success('Signup Success', { position: 'top-right' });
       router.push("/");
     } catch (error) {
       console.error("Signup failed:", error);
-      
+      toast.error('Signup is failed, try again', { position: 'top-right' });
     }
   };
 
