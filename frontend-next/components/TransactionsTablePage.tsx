@@ -60,7 +60,7 @@ const TransactionsTable = () => {
       head: [['Title', 'Date', 'Description', 'Credit', 'Debit']],
       body: data.map(transaction => [
         transaction.title,
-        format(new Date(transaction.datetime), 'yyyy-MM-dd HH:mm'),
+        format(new Date(transaction.datetime), 'dd-MM-yyyy'),
         transaction.description,
         transaction.credit || '',
         transaction.debit || ''
@@ -119,7 +119,7 @@ const TransactionsTable = () => {
             {data.map((transaction, index) => (
               <tr key={index} className={`border border-gray-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                 <td className="px-4 py-2">{transaction.title}</td>
-                <td className="px-4 py-2">{format(new Date(transaction.datetime), 'yyyy-MM-dd HH:mm')}</td>
+                <td className="px-4 py-2">{format(new Date(transaction.datetime), 'dd-MM-yyyy')}</td>
                 <td className="px-4 py-2">{transaction.description}</td>
                 <td className="px-4 py-2 text-green-600">{transaction.credit}</td>
                 <td className="px-4 py-2 text-red-600">{transaction.debit}</td>
