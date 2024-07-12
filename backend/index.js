@@ -13,7 +13,12 @@ const transactionGet = require('./middleware/transaction/transactionGet');
 const app = express();
 const port = process.env.PORT || 4000;
 
-app.use(cors());
+const corsOptions = {
+  origin: 'https://money-tracker-adv.vercel.app',
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Connect to MongoDB
