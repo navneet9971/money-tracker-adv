@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const baseURL = 'http://localhost:4000/'
+const baseURL = 'https://money-tacker-backend.onrender.com/'
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
