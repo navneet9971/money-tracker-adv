@@ -96,10 +96,10 @@ export default function SignupPage() {
                   <Input id="lastName" placeholder="Jha" type="text" onChange={handleInputChange} value={formData.lastName} required />
                 </LabelInputContainer>
               </div>
-              <LabelInputContainer className="mb-4">
+              {/* <LabelInputContainer className="mb-4">
                 <Label htmlFor="profilePicture">Profile Picture</Label>
                 <Input id="profilePicture" type="file" accept="image/*" onChange={handleProfilePictureChange} />
-              </LabelInputContainer>
+              </LabelInputContainer> */}
 
               <LabelInputContainer className="mb-4">
                 <Label htmlFor="email">Email Address</Label>
